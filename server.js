@@ -5,6 +5,9 @@ const { Server } = require('socket.io');
 const pty = require('node-pty');
 const path = require('path');
 
+require('dotenv').config()
+const { env } = require('node:process')
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
@@ -52,6 +55,6 @@ io.on('connection', (socket) => {
 });
 
 const PORT = 2002;
-server.listen(PORT, '0.0.0.0', () => {
+server.listen(env.PORT, '0.0.0.0', () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
