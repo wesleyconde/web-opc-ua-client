@@ -9,5 +9,4 @@ COPY . .
 
 RUN npm install && npm install opcua-commander -g
 
-# Start a bash shell by default
 CMD ["node", "server.js"]
