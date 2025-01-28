@@ -1,10 +1,10 @@
 services:
 
   opcua-client:
-    build: .
+    image: ghcr.io/wesleyconde/web-opc-ua-client:main
     container_name: OpcUaClient
     ports:
-      - ${PORT}:${PORT}
+      - ${opc_client_port}:2002
     networks:
       - default
 
