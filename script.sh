@@ -13,35 +13,39 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# get password
-password=$(dialog --title "Password" --stdout --clear --insecure --passwordbox "Enter the password" 10 30 )
+while true; do 
 
-if [ $password == "mctech" ]; then
+  # get password
+  password=$(dialog --title "OPC Ua Client" --stdout --clear --insecure --passwordbox "Enter the password" 10 30 )
 
-  # Form for IP address and port input
-  dialog --title "OPC Ua Client" --form "Enter the address and port below:" 15 50 2 \
-    "IP Address:" 1 1 "127.0.0.1" 1 15 30 0 \
-    "Port:"      2 1 "8080"      2 15 30 0 \
-    2> "$TMP_FILE"
+  if [ $password == "mctech" ]; then
 
-  # Check if the user canceled
-  if [ $? -ne 0 ]; then
-    echo "Operation canceled by the user."
-    exit 1
+    # Form for IP address and port input
+    dialog --title "OPC Ua Client" --form "Enter the address and port below:" 15 50 2 \
+      "IP Address:" 1 1 "" 1 15 30 0 \
+      "Port:"      2 1 "4840"      2 15 30 0 \
+      2> "$TMP_FILE"
+
+    opt=$?
+
+    # Check if the user canceled
+    if [ $? -ne 0 ]; then
+      dialog --msgbox "Canceled." 10 25
+
+    else
+
+      # Read the form values
+      ADDRESS=$(sed -n 1p "$TMP_FILE")
+      PORT=$(sed -n 2p "$TMP_FILE")
+      opcua-commander -e opc.tcp://$ADDRESS:$PORT
+
   fi
 
-  # Read the form values
-  ADDRESS=$(sed -n 1p "$TMP_FILE")
-  PORT=$(sed -n 2p "$TMP_FILE")
-  # Cleanup and return to normal terminal
-  clear
+  else
+    dialog --msgbox  "Incorrect password." 10 25
 
-  opcua-commander -e opc.tcp://$ADDRESS:$PORT
+  fi
 
-else
-
-  dialog --msgbox  "Incorrect password." 10 25
-
-fi
+done
 
 
